@@ -19,9 +19,10 @@ public class CombinerMachine : Machine
     public override void OnItemEnter(Item item)
     {
         // TODO 1 : afficher dans la Console le nom de l'ingrédient qui arrive (item.itemName).
-
+        Debug.Log("rentré : " + item.itemName);
 
         // TODO 2 : cacher l'ingrédient.
+        item.gameObject.SetActive(false);
 
     }
 
@@ -29,6 +30,7 @@ public class CombinerMachine : Machine
     public override void OnProgress(float progress)
     {
         // TODO 3 : remplir la barre de progression.
+        SetProgressBar(progress);
 
     }
 
@@ -46,6 +48,16 @@ public class CombinerMachine : Machine
 
 
         // TODO 7 : vider la barre de progression.
+        foreach (Item oldItem in items)
+        {
+            Destroy(oldItem.gameObject);
+        }
+
+        Item newItem = CreateItem(resultPrefab);
+
+        Output(newItem);
+
+        SetProgressBar(0);
 
     }
 }
