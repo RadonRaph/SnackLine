@@ -14,43 +14,88 @@ public class TransformerMachine : Machine
     [Tooltip("Le prefab de l'item qui sort de la machine.")]
     public Item resultPrefab;
 
+    // BONUS : effets visuels (tous optionnels)
+    [Header("Effets (bonus)")]
+    [Tooltip("Particules jouées pendant le travail (ex : fumée).")]
+    public ParticleSystem workEffect;
+
+    [Tooltip("Particules jouées à la fin (ex : étincelles).")]
+    public ParticleSystem endEffect;
+
+    [Tooltip("Le modèle 3D de la machine, qui change de couleur.")]
+    public Renderer machineRenderer;
+
+    [Tooltip("Couleur de la machine quand elle chauffe.")]
+    public Color hotColor = new Color(1f, 0.3f, 0.1f);
+
+    Color normalColor;
+    bool colorSaved = false;
+
     // 1. Un item vient d'entrer dans la machine
     public override void OnItemEnter(Item item)
     {
         // TODO 1 : cacher l'item, il est maintenant "dans" la machine.
-        //          Outil : item.gameObject.SetActive(false);
+        item.gameObject.SetActive(false);
 
+        // BONUS : lancer la fumée
+        if (workEffect != null)
+        {
+            workEffect.Play();
+        }
+
+        // BONUS : garder en mémoire la couleur normale (une seule fois)
+        if (machineRenderer != null && colorSaved == false)
+        {
+            normalColor = machineRenderer.material.color;
+            colorSaved = true;
+        }
     }
 
     // 2. La machine travaille : progress va de 0 (début) à 1 (fin)
     public override void OnProgress(float progress)
     {
         // TODO 2 : remplir la barre de progression avec la valeur de progress.
-        //          Outil : SetProgressBar(progress);
+        SetProgressBar(progress);
 
+        // BONUS : la machine rougit petit à petit
+        if (machineRenderer != null)
+        {
+            machineRenderer.material.color = Color.Lerp(normalColor, hotColor, progress);
+        }
     }
 
     // 3. Le travail est fini
     public override void OnEnd()
     {
         // TODO 3 : récupérer l'item qui est dans la machine : c'est le premier de la liste items.
-        //          Outil : Item oldItem = items[0];
-
+        Item oldItem = items[0];
 
         // TODO 4 : détruire l'ancien item.
-        //          Outil : Destroy(oldItem.gameObject);
-
+        Destroy(oldItem.gameObject);
 
         // TODO 5 : créer le nouvel item à partir de resultPrefab.
-        //          Outil : Item newItem = CreateItem(resultPrefab);
-
+        Item newItem = CreateItem(resultPrefab);
 
         // TODO 6 : faire sortir le nouvel item de la machine.
-        //          Outil : Output(newItem);
-
+        Output(newItem);
 
         // TODO 7 : vider la barre de progression.
-        //          Outil : SetProgressBar(0);
+        SetProgressBar(0);
 
+        // BONUS : arrêter la fumée, lancer les étincelles, remettre la couleur normale
+        if (workEffect != null)
+        {
+            workEffect.Stop();
+        }
+
+        if (endEffect != null)
+        {
+            endEffect.Play();
+        }
+
+        if (machineRenderer != null)
+        {
+            machineRenderer.material.color = normalColor;
+        }
     }
 }
