@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 
 /// <summary>
@@ -9,6 +10,8 @@ public class SellZone : Machine
     [Header("Vente")]
     [Tooltip("Nombre total d'items vendus.")]
     public int totalSold = 0;
+
+    public TMP_Text counterText;
 
     public override void OnItemEnter(Item item)
     {
@@ -28,6 +31,10 @@ public class SellZone : Machine
             totalSold = totalSold + 1;
             Debug.Log("Vendu : " + item.itemName + " (total vendu : " + totalSold + ")");
             Destroy(item.gameObject);
+        }
+
+        if (counterText != null) { 
+            counterText.text = totalSold.ToString();
         }
     }
 }
