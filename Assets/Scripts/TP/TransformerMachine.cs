@@ -3,10 +3,10 @@ using UnityEngine;
 /// <summary>
 /// [TP] Machine qui transforme un item en un autre.
 /// Exemple : un four qui transforme "meat-raw" (steak cru) en "meat-cooked" (steak cuit).
-///
+/// 
 /// Dans l'Inspector :
-///   - Accepted Items : le nom de l'item qui entre (ex : meat-raw)
-///   - Result Prefab  : le prefab de l'item qui sort (ex : Prefabs/Items/meat-cooked)
+/// Accepted Items : le nom de l'item qui entre (ex : meat-raw)
+/// Result Prefab  : le prefab de l'item qui sort (ex : Prefabs/Items/meat-cooked)
 /// </summary>
 public class TransformerMachine : Machine
 {
@@ -14,12 +14,18 @@ public class TransformerMachine : Machine
     [Tooltip("Le prefab de l'item qui sort de la machine.")]
     public Item resultPrefab;
 
+    [Header("Indicateur Visuel")]
+    [Tooltip("L'objet lumineux (voyant) qui s'allume quand la machine fonctionne.")]
+    [SerializeField] private GameObject voyantLumiere;
+    [Header("VFX")]
+    [SerializeField] private ParticleSystem machineVFX;
+
     // 1. Un item vient d'entrer dans la machine
     public override void OnItemEnter(Item item)
     {
         // TODO 1 : cacher l'item, il est maintenant "dans" la machine.
         //          Outil : item.gameObject.SetActive(false);
-
+        item.gameObject.SetActive(false);
     }
 
     // 2. La machine travaille : progress va de 0 (début) à 1 (fin)
@@ -27,7 +33,16 @@ public class TransformerMachine : Machine
     {
         // TODO 2 : remplir la barre de progression avec la valeur de progress.
         //          Outil : SetProgressBar(progress);
+        SetProgressBar(progress);
+        if(machineVFX != null && !machineVFX.isPlaying)
+    {
+            machineVFX.Play(); // Démarre l'effet de fumée
+        }
 
+        if (voyantLumiere != null)
+        {
+            voyantLumiere.SetActive(true);
+        }
     }
 
     // 3. Le travail est fini
@@ -35,22 +50,31 @@ public class TransformerMachine : Machine
     {
         // TODO 3 : récupérer l'item qui est dans la machine : c'est le premier de la liste items.
         //          Outil : Item oldItem = items[0];
-
+        Item oldItem = items[0];
 
         // TODO 4 : détruire l'ancien item.
         //          Outil : Destroy(oldItem.gameObject);
-
+        Destroy(oldItem.gameObject);
 
         // TODO 5 : créer le nouvel item à partir de resultPrefab.
         //          Outil : Item newItem = CreateItem(resultPrefab);
-
+        Item newItem = CreateItem(resultPrefab);
 
         // TODO 6 : faire sortir le nouvel item de la machine.
         //          Outil : Output(newItem);
-
+        Output(newItem);
 
         // TODO 7 : vider la barre de progression.
         //          Outil : SetProgressBar(0);
+        SetProgressBar(0);
 
+        if (voyantLumiere != null)
+        {
+            voyantLumiere.SetActive(false);
+        }
+        if (machineVFX != null)
+        {
+            machineVFX.Stop(); // Arrête l'effet de fumée
+        }
     }
 }
