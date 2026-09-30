@@ -14,43 +14,79 @@ public class TransformerMachine : Machine
     [Tooltip("Le prefab de l'item qui sort de la machine.")]
     public Item resultPrefab;
 
+    [Header("Effets visuels (Bonus)")]
+    [Tooltip("La lumière à allumer pendant la cuisson.")]
+    public Light cookingLight;
+
+    [Tooltip("Le système de particules de fumée pendant la cuisson.")]
+    public ParticleSystem cookingSmoke;
+
+    // S'assure que les effets sont éteints au lancement du jeu
+    protected virtual void Start()
+    {
+        if (cookingLight != null)
+        {
+            cookingLight.enabled = false;
+        }
+
+        if (cookingSmoke != null)
+        {
+            cookingSmoke.Stop();
+        }
+    }
+
     // 1. Un item vient d'entrer dans la machine
     public override void OnItemEnter(Item item)
     {
         // TODO 1 : cacher l'item, il est maintenant "dans" la machine.
-        //          Outil : item.gameObject.SetActive(false);
+        item.gameObject.SetActive(false);
 
+        // Démarre les effets visuels de cuisson
+        if (cookingLight != null)
+        {
+            cookingLight.enabled = true;
+        }
+
+        if (cookingSmoke != null)
+        {
+            cookingSmoke.Play();
+        }
     }
 
     // 2. La machine travaille : progress va de 0 (début) à 1 (fin)
     public override void OnProgress(float progress)
     {
         // TODO 2 : remplir la barre de progression avec la valeur de progress.
-        //          Outil : SetProgressBar(progress);
-
+        SetProgressBar(progress);
     }
 
     // 3. Le travail est fini
     public override void OnEnd()
     {
         // TODO 3 : récupérer l'item qui est dans la machine : c'est le premier de la liste items.
-        //          Outil : Item oldItem = items[0];
-
+        Item oldItem = items[0];
 
         // TODO 4 : détruire l'ancien item.
-        //          Outil : Destroy(oldItem.gameObject);
-
+        Destroy(oldItem.gameObject);
 
         // TODO 5 : créer le nouvel item à partir de resultPrefab.
-        //          Outil : Item newItem = CreateItem(resultPrefab);
-
+        Item newItem = CreateItem(resultPrefab);
 
         // TODO 6 : faire sortir le nouvel item de la machine.
-        //          Outil : Output(newItem);
-
+        Output(newItem);
 
         // TODO 7 : vider la barre de progression.
-        //          Outil : SetProgressBar(0);
+        SetProgressBar(0);
 
+        // Coupe les effets visuels à la fin du travail
+        if (cookingLight != null)
+        {
+            cookingLight.enabled = false;
+        }
+
+        if (cookingSmoke != null)
+        {
+            cookingSmoke.Stop();
+        }
     }
 }
