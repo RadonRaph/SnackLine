@@ -6,7 +6,7 @@ Vous allez construire une **usine alimentaire automatisée** : des sources produ
 
 ```
 Source (steak cru) → convoyeurs → Four → convoyeurs → Assembleur → convoyeurs → Vente
-Source (pain)      → convoyeurs ─────────────────────↗
+Source (pain)      → convoyeurs → Assembleur
 ```
 
 ## Avant de commencer
@@ -67,9 +67,9 @@ Les réglages dans l'Inspector :
 | `Progress Time` | Durée du travail, en secondes. |
 | `Accepted Items` | La **recette** : les noms des items acceptés. La machine démarre quand elle les a **tous**. Vide = accepte tout, un item à la fois. |
 
-> ⚠️ **Règle d'or** : l'`OutputPoint` d'une machine doit toucher l'`InputZone` de la machine suivante. Sinon, la machine se bloque et la Console vous prévient.
+> **Règle d'or** : l'`OutputPoint` d'une machine doit toucher l'`InputZone` de la machine suivante. Sinon, la machine se bloque et la Console vous prévient.
 >
-> ⚠️ N'écrivez **pas** de fonction `Awake`, `Update` ou `OnTriggerStay` dans vos machines : elles remplaceraient celles de `Machine`, et plus rien ne marcherait.
+> **Attention** : n'écrivez **pas** de fonction `Awake`, `Update` ou `OnTriggerStay` dans vos machines : elles remplaceraient celles de `Machine`, et plus rien ne marcherait.
 
 ### Placer les machines
 
