@@ -52,12 +52,12 @@ public class SellZone : Machine
 
             else if (item.itemName == "cake-birthday")
             {
-                totalBurger = totalGateau + 1;
+                totalGateau = totalGateau + 1;
             }
 
             else if (item.itemName == "popsicle-chocolate")
             {
-                totalBurger = totalGlace + 1;
+                totalGlace = totalGlace + 1;
             }
 
             totalVendu = totalHotDog + totalBurger + totalGateau + totalGlace;
