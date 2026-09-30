@@ -7,18 +7,19 @@ using UnityEngine;
 /// Une machine est composée de :
 ///   - InputZone   : un objet enfant avec un Box Collider. Les items qui le touchent entrent dans la machine.
 ///   - OutputPoint : un objet enfant vide. Les items sortent à cet endroit (il doit toucher la machine suivante).
-///   - ProgressBar : (optionnel) un objet enfant qui s'agrandit pendant le travail.
+///   - ProgressBar : (optionnel) un objet enfant qui s'agrandit avec SetProgressBar(...).
 ///
 /// Déroulement :
 ///   1. Un item entre dans la machine            -> OnItemEnter(item)
 ///   2. La machine travaille "Progress Time" s   -> OnProgress(progress) à chaque image (progress va de 0 à 1)
 ///   3. Le travail est fini                      -> OnEnd()
+///      Ensuite, la liste items est vidée automatiquement.
 ///
 /// ATTENTION : dans ta machine, n'écris pas de fonction Awake, Update ou OnTriggerStay :
 /// elles remplaceraient celles de Machine et plus rien ne marcherait.
 /// </summary>
 [RequireComponent(typeof(Rigidbody))]
-public abstract class Machine : MonoBehaviour
+public class Machine : MonoBehaviour
 {
     [Header("Objets de la machine")]
     [Tooltip("Objet enfant avec un Box Collider : zone où les items entrent.")]
@@ -27,7 +28,7 @@ public abstract class Machine : MonoBehaviour
     [Tooltip("Objet enfant vide : endroit où les items sortent.")]
     public Transform outputPoint;
 
-    [Tooltip("Optionnel : objet enfant qui s'agrandit pendant le travail.")]
+    [Tooltip("Optionnel : objet enfant qui s'agrandit avec SetProgressBar(...).")]
     public Transform progressBar;
 
     [Header("Réglages")]
@@ -38,40 +39,42 @@ public abstract class Machine : MonoBehaviour
              "Liste vide = accepte n'importe quel item, un par un.")]
     public string[] acceptedItems = new string[0];
 
-    // Les items qui sont dans la machine
-    protected List<Item> items = new List<Item>();
+    [Header("Pendant le jeu")]
+    [Tooltip("Les items qui sont dans la machine.")]
+    public List<Item> items = new List<Item>();
 
-    // Vrai pendant que la machine travaille
-    protected bool isWorking = false;
+    [Tooltip("Coché pendant que la machine travaille.")]
+    public bool isWorking = false;
 
     float timer = 0f;
     Item lastOutput;
     float blockedTime = 0f;
 
     // =====================================================================
-    // Les 3 fonctions à écrire dans ta machine
+    // Les 3 fonctions que chaque machine réécrit (avec override)
     // =====================================================================
 
-    /// <summary>Un item vient d'entrer. Par défaut, il est caché (il est "dans" la machine).</summary>
-    protected virtual void OnItemEnter(Item item)
+    /// <summary>Un item vient d'entrer dans la machine.</summary>
+    public virtual void OnItemEnter(Item item)
     {
-        item.gameObject.SetActive(false);
     }
 
     /// <summary>Appelée à chaque image pendant le travail. progress va de 0 (début) à 1 (fin).</summary>
-    protected virtual void OnProgress(float progress)
+    public virtual void OnProgress(float progress)
     {
     }
 
     /// <summary>Le travail est fini : c'est ici que la machine produit quelque chose.</summary>
-    protected abstract void OnEnd();
+    public virtual void OnEnd()
+    {
+    }
 
     // =====================================================================
     // Les outils à utiliser dans ta machine
     // =====================================================================
 
     /// <summary>Crée un nouvel item dans la machine. Ensuite, sors-le avec Output(...).</summary>
-    protected Item CreateItem(Item prefab)
+    public Item CreateItem(Item prefab)
     {
         if (prefab == null)
         {
@@ -87,7 +90,7 @@ public abstract class Machine : MonoBehaviour
     }
 
     /// <summary>Sort un item de la machine : il est posé sur l'OutputPoint.</summary>
-    protected void Output(Item item)
+    public void Output(Item item)
     {
         if (item == null)
         {
@@ -108,18 +111,21 @@ public abstract class Machine : MonoBehaviour
         lastOutput = item;
     }
 
-    /// <summary>Détruit tous les items qui sont dans la machine.</summary>
-    protected void DestroyInputItems()
+    /// <summary>Règle la barre de progression : 0 = vide, 1 = pleine.</summary>
+    public void SetProgressBar(float value)
     {
-        foreach (Item item in items)
+        if (progressBar == null)
         {
-            Destroy(item.gameObject);
+            
+            Debug.LogWarning(name + " : le champ Progress Bar est vide. Glisse l'objet enfant ProgressBar dedans (Inspector).", this);
+
+            return;
         }
-        items.Clear();
+        progressBar.localScale = new Vector3(value, 1f, 1f);
     }
 
     /// <summary>Renvoie l'item de la machine qui porte ce nom, ou null s'il n'y en a pas.</summary>
-    protected Item GetItem(string itemName)
+    public Item GetItem(string itemName)
     {
         foreach (Item item in items)
         {
@@ -155,7 +161,11 @@ public abstract class Machine : MonoBehaviour
             inputZone.GetComponent<Collider>().isTrigger = true;
         }
 
-        SetProgressBar(0f);
+        // La barre commence vide
+        if (progressBar != null)
+        {
+            progressBar.localScale = new Vector3(0f, 1f, 1f);
+        }
     }
 
     void Update()
@@ -175,20 +185,12 @@ public abstract class Machine : MonoBehaviour
         }
 
         OnProgress(progress);
-        SetProgressBar(progress);
 
         if (timer >= progressTime)
         {
             isWorking = false;
-            SetProgressBar(0f);
             OnEnd();
-
-            if (items.Count > 0)
-            {
-                Debug.LogWarning(name + " : des items sont restés dans la machine après OnEnd. " +
-                                 "Utilise DestroyInputItems() ou Output(item). Ils sont supprimés.", this);
-                DestroyInputItems();
-            }
+            items.Clear();
         }
     }
 
@@ -260,15 +262,7 @@ public abstract class Machine : MonoBehaviour
         return acceptedItems.Length;
     }
 
-    void SetProgressBar(float progress)
-    {
-        if (progressBar != null)
-        {
-            progressBar.localScale = new Vector3(progress, 1f, 1f);
-        }
-    }
-
-    // Prévient dans la Console si la machine est bloquée depuis 5 secondes
+    // Prévient dans la Console si la machine attend depuis 5 secondes
     void CheckIfBlocked()
     {
         if (IsOutputWaiting() == false)

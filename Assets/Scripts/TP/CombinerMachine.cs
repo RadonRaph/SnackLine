@@ -15,26 +15,37 @@ public class CombinerMachine : Machine
     [Tooltip("Le prefab du produit fini.")]
     public Item resultPrefab;
 
-    protected override void OnItemEnter(Item item)
+    // 1. Un ingrédient vient d'entrer dans la machine
+    public override void OnItemEnter(Item item)
     {
-        // TODO 1 : afficher dans la Console le nom de l'ingrédient qui arrive.
-        //          Outils : Debug.Log(...); et item.itemName
+        // TODO 1 : afficher dans la Console le nom de l'ingrédient qui arrive (item.itemName).
 
 
-        // TODO 2 : cacher l'ingrédient, il est maintenant "dans" la machine.
-        //          Outil : item.gameObject.SetActive(false);
+        // TODO 2 : cacher l'ingrédient.
 
     }
 
-    protected override void OnEnd()
+    // 2. La machine travaille : progress va de 0 (début) à 1 (fin)
+    public override void OnProgress(float progress)
     {
-        // TODO 3 : détruire tous les ingrédients qui sont dans la machine.
+        // TODO 3 : remplir la barre de progression.
+
+    }
+
+    // 3. Le travail est fini
+    public override void OnEnd()
+    {
+        // TODO 4 : détruire TOUS les ingrédients de la liste items.
+        //          Astuce : une boucle foreach (Item item in items) { ... }
 
 
-        // TODO 4 : créer le produit fini à partir de resultPrefab.
+        // TODO 5 : créer le produit fini à partir de resultPrefab.
 
 
-        // TODO 5 : faire sortir le produit fini de la machine.
+        // TODO 6 : faire sortir le produit fini de la machine.
+
+
+        // TODO 7 : vider la barre de progression.
 
     }
 }

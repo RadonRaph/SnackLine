@@ -38,24 +38,26 @@ Toutes les machines (même les convoyeurs) héritent de la classe `Machine`. Une
 |---|---|
 | `InputZone` | Un Box Collider : les items qui le touchent **entrent** dans la machine. |
 | `OutputPoint` | Un objet vide : les items **sortent** à cet endroit. |
-| `ProgressBar` | La barre verte qui se remplit pendant le travail (optionnelle). |
+| `ProgressBar` | La barre verte qui se remplit pendant le travail, avec `SetProgressBar(...)`. |
 
-Le travail se passe en 3 temps. Vous écrivez ce que fait la machine à chaque temps :
+Le travail se passe en 3 temps. Dans votre machine, vous réécrivez (`override`) ces 3 fonctions pour dire ce que fait la machine à chaque temps :
 
 | Fonction | Quand ? |
 |---|---|
-| `OnItemEnter(Item item)` | Un item vient d'entrer. Par défaut, il est caché (il est « dans » la machine). |
+| `OnItemEnter(Item item)` | Un item vient d'entrer dans la machine. |
 | `OnProgress(float progress)` | À chaque image pendant le travail. `progress` va de 0 (début) à 1 (fin). |
-| `OnEnd()` | Le travail est fini : la machine produit quelque chose. |
+| `OnEnd()` | Le travail est fini : la machine produit quelque chose. Ensuite, la liste `items` est vidée automatiquement. |
 
 Les outils disponibles dans une machine :
 
 | Outil | Rôle |
 |---|---|
 | `items` | La liste des items dans la machine. `items[0]` est le premier. |
-| `DestroyInputItems()` | Détruit tous les items de la machine. |
 | `CreateItem(prefab)` | Crée un nouvel item dans la machine et le renvoie. |
 | `Output(item)` | Fait sortir un item sur l'`OutputPoint`. |
+| `SetProgressBar(valeur)` | Règle la barre de progression : 0 = vide, 1 = pleine. |
+| `Destroy(item.gameObject)` | Détruit un item (fonction de Unity). |
+| `item.gameObject.SetActive(false)` | Cache un item (fonction de Unity). |
 | `GetItem("bread")` | Renvoie l'item de la machine qui porte ce nom (ou `null`). |
 
 Les réglages dans l'Inspector :
@@ -90,7 +92,7 @@ Dans `SnackLine_Exemple` :
 
 Le four transforme un steak cru (`meat-raw`) en steak cuit (`meat-cooked`).
 
-1. **Le code** : complétez les 3 TODO de `TransformerMachine.OnEnd()`.
+1. **Le code** : complétez les 7 TODO de `TransformerMachine`. Chaque TODO vous donne la ligne à écrire.
 2. **La machine** :
    1. Glissez `Prefabs/Machines/Machine_Modele` dans la scène `SnackLine_TP` et renommez-le `Four`.
    2. `Add Component` → `TransformerMachine`.
@@ -103,7 +105,7 @@ Le four transforme un steak cru (`meat-raw`) en steak cuit (`meat-cooked`).
 
 L'assembleur combine plusieurs ingrédients en un produit (ex : `bread` + `meat-cooked` → `burger`).
 
-1. Complétez les 5 TODO de `CombinerMachine`. Inspirez-vous de votre four !
+1. Complétez les 7 TODO de `CombinerMachine`. Cette fois, la ligne à écrire n'est pas donnée : inspirez-vous de votre four ! Attention, il faut détruire **tous** les ingrédients (boucle `foreach`).
 2. Créez la machine et son prefab comme à l'étape 2, avec `Accepted Items` = `bread` et `meat-cooked`.
 3. Amenez les deux ingrédients à l'assembleur par **deux convoyeurs différents**, qui arrivent chacun par un côté de la machine.
 

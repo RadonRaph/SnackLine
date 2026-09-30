@@ -16,12 +16,12 @@ public class Conveyor : Machine
     [Tooltip("Optionnel : milieu du virage (pour les convoyeurs d'angle).")]
     public Transform middlePoint;
 
-    protected override void OnItemEnter(Item item)
+    public override void OnItemEnter(Item item)
     {
         item.transform.position = startPoint.position;
     }
 
-    protected override void OnProgress(float progress)
+    public override void OnProgress(float progress)
     {
         Item item = items[0];
 
@@ -42,7 +42,7 @@ public class Conveyor : Machine
         }
     }
 
-    protected override void OnEnd()
+    public override void OnEnd()
     {
         Output(items[0]);
     }

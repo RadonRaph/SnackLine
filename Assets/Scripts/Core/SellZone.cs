@@ -10,14 +10,24 @@ public class SellZone : Machine
     [Tooltip("Nombre total d'items vendus.")]
     public int totalSold = 0;
 
-    protected override void OnEnd()
+    public override void OnItemEnter(Item item)
+    {
+        // L'item est caché : il est "dans" la zone de vente
+        item.gameObject.SetActive(false);
+    }
+
+    public override void OnProgress(float progress)
+    {
+        // Pas de barre de progression pour la vente
+    }
+
+    public override void OnEnd()
     {
         foreach (Item item in items)
         {
             totalSold = totalSold + 1;
             Debug.Log("Vendu : " + item.itemName + " (total vendu : " + totalSold + ")");
+            Destroy(item.gameObject);
         }
-
-        DestroyInputItems();
     }
 }
