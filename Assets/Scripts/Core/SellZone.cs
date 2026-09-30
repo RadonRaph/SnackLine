@@ -3,20 +3,23 @@ using TMPro;
 
 /// <summary>
 /// Fin de la chaîne.
-/// Tous les items sont récupérés et détruits.
-/// Les "bag" sont corrects, les autres sont à refaire.
-/// 
+/// Les "bag" sont corrects.
+/// Tous les autres items sont à refaire.
+/// </summary>
 public class SellZone : Machine
 {
     [Header("Vente")]
     public int totalSold = 0;
     public int totalRefaire = 0;
 
+    [Header("Objectif")]
+    public int objectif = 5;
+
     [Header("Interface")]
     public TMP_Text formulesText;
     public TMP_Text refaireText;
+    public GameObject endText;
 
-    // Quand un item arrive
     public override void OnItemEnter(Item item)
     {
         // Cacher l'item
@@ -28,29 +31,34 @@ public class SellZone : Machine
         // Pas de progression
     }
 
-    // Quand l'item arrive à la fin
     public override void OnEnd()
     {
         foreach (Item item in items)
         {
-            // Si c'est un bag, le produit est correct
+            // Un bag est une formule correcte
             if (item.itemName == "bag")
             {
                 totalSold++;
-                Debug.Log("Formule terminée : " + item.itemName);
+                Debug.Log("Formule terminée : " + totalSold);
             }
             else
             {
                 // Tous les autres items sont à refaire
                 totalRefaire++;
-                Debug.Log("À refaire : " + item.itemName);
+                Debug.Log("À refaire : " + totalRefaire);
             }
 
             // Mettre à jour l'interface
             formulesText.text = " " + totalSold;
             refaireText.text = " " + totalRefaire;
 
-            // Détruire l'item dans tous les cas
+            // Vérifier si l'objectif est atteint
+            if (totalSold >= objectif)
+            {
+                endText.SetActive(true);
+            }
+
+            // Détruire l'item
             Destroy(item.gameObject);
         }
     }
