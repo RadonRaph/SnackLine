@@ -14,43 +14,44 @@ public class TransformerMachine : Machine
     [Tooltip("Le prefab de l'item qui sort de la machine.")]
     public Item resultPrefab;
 
+    [Header("VFX")]
+    [Tooltip("Le système de particules qui joue pendant la transformation.")]
+    public ParticleSystem smokeEffect;
+
     // 1. Un item vient d'entrer dans la machine
     public override void OnItemEnter(Item item)
     {
         // TODO 1 : cacher l'item, il est maintenant "dans" la machine.
-        //          Outil : item.gameObject.SetActive(false);
+        item.gameObject.SetActive(false);
 
+        if (smokeEffect != null) smokeEffect.Play();
     }
 
     // 2. La machine travaille : progress va de 0 (début) à 1 (fin)
     public override void OnProgress(float progress)
     {
         // TODO 2 : remplir la barre de progression avec la valeur de progress.
-        //          Outil : SetProgressBar(progress);
-
+        SetProgressBar(progress);
     }
 
     // 3. Le travail est fini
     public override void OnEnd()
     {
-        // TODO 3 : récupérer l'item qui est dans la machine : c'est le premier de la liste items.
-        //          Outil : Item oldItem = items[0];
+        if (smokeEffect != null) smokeEffect.Stop();
 
+        // TODO 3 : récupérer l'item qui est dans la machine : c'est le premier de la liste items.
+        Item oldItem = items[0];
 
         // TODO 4 : détruire l'ancien item.
-        //          Outil : Destroy(oldItem.gameObject);
-
+        Destroy(oldItem.gameObject);
 
         // TODO 5 : créer le nouvel item à partir de resultPrefab.
-        //          Outil : Item newItem = CreateItem(resultPrefab);
-
+        Item newItem = CreateItem(resultPrefab);
 
         // TODO 6 : faire sortir le nouvel item de la machine.
-        //          Outil : Output(newItem);
-
+        Output(newItem);
 
         // TODO 7 : vider la barre de progression.
-        //          Outil : SetProgressBar(0);
-
+        SetProgressBar(0);
     }
 }
