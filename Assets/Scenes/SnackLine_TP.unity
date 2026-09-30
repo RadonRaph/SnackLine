@@ -1702,6 +1702,10 @@ PrefabInstance:
       value: Conveyor (1)
       objectReference: {fileID: 0}
     - target: {fileID: 7859537482172900590, guid: 157ce7fd9bdab4f27b602661e93c42ef, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7859537482172900590, guid: 157ce7fd9bdab4f27b602661e93c42ef, type: 3}
       propertyPath: progressTime
       value: 1
       objectReference: {fileID: 0}
