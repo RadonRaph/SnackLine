@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 /// <summary>
@@ -10,6 +11,12 @@ public class SellZone : Machine
     [Tooltip("Nombre total d'items vendus.")]
     public int totalSold = 0;
 
+    public TMPro.TextMeshProUGUI totalSoldText;
+    public TMPro.TextMeshProUGUI textDeFin;
+    public void Awake()
+    {
+        textDeFin.text = "";
+    }
     public override void OnItemEnter(Item item)
     {
         // L'item est caché : il est "dans" la zone de vente
@@ -28,6 +35,12 @@ public class SellZone : Machine
             totalSold = totalSold + 1;
             Debug.Log("Vendu : " + item.itemName + " (total vendu : " + totalSold + ")");
             Destroy(item.gameObject);
+            totalSoldText.text = totalSold.ToString();
+            if (totalSold == 10)
+            {
+                textDeFin.text = "Fin De Journée";
+                Time.timeScale = 0f;
+            }
         }
     }
 }

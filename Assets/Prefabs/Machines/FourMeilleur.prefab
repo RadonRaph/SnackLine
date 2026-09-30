@@ -22,7 +22,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 813807910282319225, guid: f0d1dc141d2a6a54d858510ec2670b64, type: 3}
       propertyPath: m_Intensity
-      value: 1
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 1001594428470171235, guid: f0d1dc141d2a6a54d858510ec2670b64, type: 3}
       propertyPath: m_Name
@@ -70,6 +70,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6158637897287382083, guid: f0d1dc141d2a6a54d858510ec2670b64, type: 3}
       propertyPath: progressTime
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6533502525335900431, guid: f0d1dc141d2a6a54d858510ec2670b64, type: 3}
+      propertyPath: m_Color.b
+      value: 0.14779866
+      objectReference: {fileID: 0}
+    - target: {fileID: 6533502525335900431, guid: f0d1dc141d2a6a54d858510ec2670b64, type: 3}
+      propertyPath: m_Color.g
+      value: 0.37317204
+      objectReference: {fileID: 0}
+    - target: {fileID: 6533502525335900431, guid: f0d1dc141d2a6a54d858510ec2670b64, type: 3}
+      propertyPath: m_Color.r
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
