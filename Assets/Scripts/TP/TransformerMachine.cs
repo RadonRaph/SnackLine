@@ -14,12 +14,21 @@ public class TransformerMachine : Machine
     [Tooltip("Le prefab de l'item qui sort de la machine.")]
     public Item resultPrefab;
 
+    public GameObject VFX;
+    public int resultCount;
+
+    private void Start()
+    {
+        VFX?.SetActive(false);
+    }
+
     // 1. Un item vient d'entrer dans la machine
     public override void OnItemEnter(Item item)
     {
         // TODO 1 : cacher l'item, il est maintenant "dans" la machine.
         //          Outil : item.gameObject.SetActive(false);
 
+        item.gameObject.SetActive(false);
     }
 
     // 2. La machine travaille : progress va de 0 (début) à 1 (fin)
@@ -27,30 +36,23 @@ public class TransformerMachine : Machine
     {
         // TODO 2 : remplir la barre de progression avec la valeur de progress.
         //          Outil : SetProgressBar(progress);
-
+        SetProgressBar(progress);
+        VFX?.SetActive(Mathf.Sin(progress*25) > 0);
     }
 
     // 3. Le travail est fini
     public override void OnEnd()
     {
-        // TODO 3 : récupérer l'item qui est dans la machine : c'est le premier de la liste items.
-        //          Outil : Item oldItem = items[0];
+        Destroy(items[0].gameObject);
 
+        for (int i = 0; i < resultCount; i++)
+        {
+            Item newItem = CreateItem(resultPrefab);
+            Output(newItem);
+        }
 
-        // TODO 4 : détruire l'ancien item.
-        //          Outil : Destroy(oldItem.gameObject);
-
-
-        // TODO 5 : créer le nouvel item à partir de resultPrefab.
-        //          Outil : Item newItem = CreateItem(resultPrefab);
-
-
-        // TODO 6 : faire sortir le nouvel item de la machine.
-        //          Outil : Output(newItem);
-
-
-        // TODO 7 : vider la barre de progression.
-        //          Outil : SetProgressBar(0);
+         SetProgressBar(0);
+        VFX?.SetActive(false);
 
     }
 }

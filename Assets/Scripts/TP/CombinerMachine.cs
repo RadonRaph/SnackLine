@@ -15,20 +15,35 @@ public class CombinerMachine : Machine
     [Tooltip("Le prefab du produit fini.")]
     public Item resultPrefab;
 
+    public GameObject VFX;
+
+    private void Start()
+    {
+        VFX?.SetActive(false);
+    }
+
     // 1. Un ingrédient vient d'entrer dans la machine
     public override void OnItemEnter(Item item)
     {
-        // TODO 1 : afficher dans la Console le nom de l'ingrédient qui arrive (item.itemName).
-
-
-        // TODO 2 : cacher l'ingrédient.
+        item.gameObject.SetActive(false);
 
     }
 
     // 2. La machine travaille : progress va de 0 (début) à 1 (fin)
     public override void OnProgress(float progress)
     {
-        // TODO 3 : remplir la barre de progression.
+        if (progress < 0.1f)
+        {
+            VFX?.SetActive(false);
+        }
+        else
+        {
+            VFX?.SetActive(true);
+        }
+
+        SetProgressBar(progress);
+
+
 
     }
 
@@ -38,14 +53,20 @@ public class CombinerMachine : Machine
         // TODO 4 : détruire TOUS les ingrédients de la liste items.
         //          Astuce : une boucle foreach (Item item in items) { ... }
 
+        foreach (Item item in items)
+        {
+            Destroy(item.gameObject);
+        }
 
         // TODO 5 : créer le produit fini à partir de resultPrefab.
+        Item newItem = CreateItem(resultPrefab);
 
 
         // TODO 6 : faire sortir le produit fini de la machine.
-
+        Output(newItem);
 
         // TODO 7 : vider la barre de progression.
-
+        SetProgressBar(0);
+        VFX?.SetActive(false);
     }
 }
