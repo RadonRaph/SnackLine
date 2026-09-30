@@ -1,12 +1,7 @@
 using UnityEngine;
 
 /// <summary>
-/// [TP] Machine qui transforme un item en un autre.
-/// Exemple : un four qui transforme "meat-raw" (steak cru) en "meat-cooked" (steak cuit).
-///
-/// Dans l'Inspector :
-///   - Accepted Items : le nom de l'item qui entre (ex : meat-raw)
-///   - Result Prefab  : le prefab de l'item qui sort (ex : Prefabs/Items/meat-cooked)
+/// Machine qui transforme un item en un autre.
 /// </summary>
 public class TransformerMachine : Machine
 {
@@ -14,43 +9,56 @@ public class TransformerMachine : Machine
     [Tooltip("Le prefab de l'item qui sort de la machine.")]
     public Item resultPrefab;
 
-    // 1. Un item vient d'entrer dans la machine
+    [Header("Lumière")]
+    [Tooltip("Lumière qui clignote pendant le travail.")]
+    public Light workingLight;
+
+    // Vitesse du clignotement
+    public float blinkSpeed = 10f;
+
+    // Quand un item entre dans la machine
     public override void OnItemEnter(Item item)
     {
-        // TODO 1 : cacher l'item, il est maintenant "dans" la machine.
-        //          Outil : item.gameObject.SetActive(false);
-
+        // Cacher l'item
+        item.gameObject.SetActive(false);
     }
 
-    // 2. La machine travaille : progress va de 0 (début) à 1 (fin)
+    // Pendant le travail de la machine
     public override void OnProgress(float progress)
     {
-        // TODO 2 : remplir la barre de progression avec la valeur de progress.
-        //          Outil : SetProgressBar(progress);
+        // Mettre à jour la barre de progression
+        SetProgressBar(progress);
 
+        // Faire clignoter la lumière
+        if (workingLight != null)
+        {
+            workingLight.enabled =
+                Mathf.Sin(Time.time * blinkSpeed) > 0;
+        }
     }
 
-    // 3. Le travail est fini
+    // Quand le travail est terminé
     public override void OnEnd()
     {
-        // TODO 3 : récupérer l'item qui est dans la machine : c'est le premier de la liste items.
-        //          Outil : Item oldItem = items[0];
+        // Récupérer l'ancien item
+        Item oldItem = items[0];
 
+        // Détruire l'ancien item
+        Destroy(oldItem.gameObject);
 
-        // TODO 4 : détruire l'ancien item.
-        //          Outil : Destroy(oldItem.gameObject);
+        // Créer le nouvel item
+        Item newItem = CreateItem(resultPrefab);
 
+        // Faire sortir le nouvel item
+        Output(newItem);
 
-        // TODO 5 : créer le nouvel item à partir de resultPrefab.
-        //          Outil : Item newItem = CreateItem(resultPrefab);
+        // Vider la barre de progression
+        SetProgressBar(0);
 
-
-        // TODO 6 : faire sortir le nouvel item de la machine.
-        //          Outil : Output(newItem);
-
-
-        // TODO 7 : vider la barre de progression.
-        //          Outil : SetProgressBar(0);
-
+        // Éteindre la lumière
+        if (workingLight != null)
+        {
+            workingLight.enabled = false;
+        }
     }
 }
