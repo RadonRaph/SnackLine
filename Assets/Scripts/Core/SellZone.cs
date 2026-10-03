@@ -13,7 +13,7 @@ public class SellZone : Machine
     public int totalRefaire = 0;
 
     [Header("Objectif")]
-    public int objectif = 5;
+    public int objectif = 3;
 
     [Header("Interface")]
     public TMP_Text formulesText;
@@ -36,7 +36,7 @@ public class SellZone : Machine
         foreach (Item item in items)
         {
             // Un bag est une formule correcte
-            if (item.itemName == "bag")
+            if (item.itemName == "bag-flat")
             {
                 totalSold++;
                 Debug.Log("Formule terminée : " + totalSold);
