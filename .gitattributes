@@ -21,3 +21,4 @@
 *.glb filter=lfs diff=lfs merge=lfs -text
 *.unitypackage filter=lfs diff=lfs merge=lfs -text
 Assets/Video/** filter=lfs diff=lfs merge=lfs -text
+Assets/Scenes/Video/** filter=lfs diff=lfs merge=lfs -text
